@@ -1,13 +1,13 @@
 provider: cartesia-tts
 author: zumilabo
 label:
-  en_US: CartesiaTts
-  ja_JP: CartesiaTts
-  zh_Hans: CartesiaTts
+  en_US: Cartesia TTS
+  ja_JP: Cartesia TTS
+  zh_Hans: Cartesia TTS
 description:
-  en_US: Models provided by Cartesia TTS.
-  ja_JP: Cartesia TTS が提供するモデル。
-  zh_Hans: Cartesia TTS 提供的模型。
+  en_US: Text-to-speech models provided by Cartesia.
+  ja_JP: Cartesia が提供するテキスト読み上げモデルです。
+  zh_Hans: Cartesia 提供的文本转语音模型。
 background: "#E5E7EB"
 help:
   title:
