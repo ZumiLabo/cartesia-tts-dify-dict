@@ -62,15 +62,18 @@ class CartesiaTtsText2SpeechModel(TTSModel):
         pronunciation_dict_id = credentials.get("pronunciation_dict_id")
         model_id = self._resolve_model_id(model)
 
-        client = Cartesia(api_key=api_key)
-        payload = self._make_payload(
-            model_id=model_id,
-            transcript=content_text,
-            voice_id=voice_id,
-            pronunciation_dict_id=pronunciation_dict_id,
-            sample_rate=44100,
-        )
-        return client.tts.bytes(**payload)
+        try:
+            client = Cartesia(api_key=api_key)
+            payload = self._make_payload(
+                model_id=model_id,
+                transcript=content_text,
+                voice_id=voice_id,
+                pronunciation_dict_id=pronunciation_dict_id,
+                sample_rate=44100,
+            )
+            return client.tts.bytes(**payload)
+        except Exception as ex:
+            raise InvokeBadRequestError(str(ex))
 
     def _tts_invoke(self, model: str, credentials: dict, content_text: str, voice: str):
         api_key = credentials.get("cartesia_api_key")
@@ -122,6 +125,38 @@ class CartesiaTtsText2SpeechModel(TTSModel):
         parts = re.split(r"(?<=[。！？!?\n])", normalized)
         return [part.strip() for part in parts if part and part.strip()]
 
+    def _extract_voice_ids(self, voices_response) -> set[str]:
+        voice_ids: set[str] = set()
+
+        if voices_response is None:
+            return voice_ids
+
+        if isinstance(voices_response, list):
+            for item in voices_response:
+                voice_id = getattr(item, "id", None)
+                if voice_id:
+                    voice_ids.add(voice_id)
+            return voice_ids
+
+        data = getattr(voices_response, "data", None)
+        if isinstance(data, list):
+            for item in data:
+                voice_id = getattr(item, "id", None)
+                if voice_id:
+                    voice_ids.add(voice_id)
+            return voice_ids
+
+        # iterable object fallback
+        try:
+            for item in voices_response:
+                voice_id = getattr(item, "id", None)
+                if voice_id:
+                    voice_ids.add(voice_id)
+        except TypeError:
+            pass
+
+        return voice_ids
+
     def validate_credentials(
         self,
         model: str,
@@ -138,8 +173,10 @@ class CartesiaTtsText2SpeechModel(TTSModel):
 
         try:
             client = Cartesia(api_key=api_key)
-            voices = client.voices.list(limit=100)
-            if not any(voice.id == voice_id for voice in voices):
+            voices_response = client.voices.list(limit=100)
+            voice_ids = self._extract_voice_ids(voices_response)
+
+            if voice_ids and voice_id not in voice_ids:
                 raise CredentialsValidateFailedError(
                     f"Voice ID '{voice_id}' not found in the available voices."
                 )
