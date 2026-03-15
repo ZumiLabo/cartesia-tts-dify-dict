@@ -1,6 +1,6 @@
 version: 0.0.3
 type: plugin
-author: ZumiLabo
+author: zumilabo
 name: cartesia-tts-dict
 label:
   en_US: cartesia-tts-dict
