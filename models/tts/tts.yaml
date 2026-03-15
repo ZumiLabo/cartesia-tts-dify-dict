@@ -1,0 +1,11 @@
+model: sonic-3
+model_type: tts
+model_properties:
+  default_voice: "Cartesia Voice"
+  voices:
+    - mode: "cartesia"
+      name: "Cartesia Voice"
+      language: ["ja-JP"]
+  word_limit: 3500
+  audio_type: "mp3"
+  max_workers: 5
