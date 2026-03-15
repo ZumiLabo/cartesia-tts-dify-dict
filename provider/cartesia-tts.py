@@ -9,6 +9,37 @@ logger = logging.getLogger(__name__)
 
 
 class CartesiaTtsModelProvider(ModelProvider):
+    def _extract_voice_ids(self, voices_response) -> set[str]:
+        voice_ids: set[str] = set()
+
+        if voices_response is None:
+            return voice_ids
+
+        if isinstance(voices_response, list):
+            for item in voices_response:
+                voice_id = getattr(item, "id", None)
+                if voice_id:
+                    voice_ids.add(voice_id)
+            return voice_ids
+
+        data = getattr(voices_response, "data", None)
+        if isinstance(data, list):
+            for item in data:
+                voice_id = getattr(item, "id", None)
+                if voice_id:
+                    voice_ids.add(voice_id)
+            return voice_ids
+
+        try:
+            for item in voices_response:
+                voice_id = getattr(item, "id", None)
+                if voice_id:
+                    voice_ids.add(voice_id)
+        except TypeError:
+            pass
+
+        return voice_ids
+
     def validate_provider_credentials(self, credentials: Mapping) -> None:
         api_key = credentials.get("cartesia_api_key")
         voice_id = credentials.get("voice_id")
@@ -20,8 +51,10 @@ class CartesiaTtsModelProvider(ModelProvider):
 
         try:
             client = Cartesia(api_key=api_key)
-            voices = client.voices.list(limit=100)
-            if not any(voice.id == voice_id for voice in voices):
+            voices_response = client.voices.list(limit=100)
+            voice_ids = self._extract_voice_ids(voices_response)
+
+            if voice_ids and voice_id not in voice_ids:
                 raise CredentialsValidateFailedError(
                     f"Voice ID '{voice_id}' not found in the available voices."
                 )
