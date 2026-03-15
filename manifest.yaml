@@ -1,19 +1,18 @@
 version: 0.0.3
 type: plugin
 author: zumilabo
-name: cartesia-tts-dict
+name: cartesia-tts
 label:
-  en_US: cartesia-tts-dict
-  ja_JP: cartesia-tts-dict
-  zh_Hans: cartesia-tts-dict
-  pt_BR: cartesia-tts-dict
+  en_US: Cartesia TTS
+  ja_JP: Cartesia TTS
+  zh_Hans: Cartesia TTS
+  pt_BR: Cartesia TTS
 description:
-  en_US: Cartesia TTS with pronunciation dictionary support
-  ja_JP: 発音辞書対応の Cartesia TTS
-  zh_Hans: 支持发音词典的 Cartesia TTS
-  pt_BR: Cartesia TTS com suporte a dicionário de pronúncia
+  en_US: Cartesia TTS plugin with pronunciation dictionary support
+  ja_JP: 発音辞書対応の Cartesia TTS プラグイン
+  zh_Hans: 支持发音词典的 Cartesia TTS 插件
+  pt_BR: Plugin Cartesia TTS com suporte a dicionário de pronúncia
 icon: icon.svg
-created_at: "2026-03-15T00:00:00+09:00"
 resource:
   memory: 268435456
   permission:
